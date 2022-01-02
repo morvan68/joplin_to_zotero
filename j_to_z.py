@@ -19,6 +19,14 @@ def mdtree_to_z( sdir , api_key):
     joplin export all as md
     
     """
+    # load text items from sdir to import them
+    #this needs to be walk, to build a dict/subdict tree structure
+    loaded_dict = {}
+    
+    loaded_dict = dir_to_dict( sdir)    
+
+    print( loaded_dict)
+
     library_id = ''
     library_type = ''
     zot = zotero.Zotero(library_id, library_type, api_key)
@@ -32,25 +40,7 @@ def mdtree_to_z( sdir , api_key):
     for item in items:
         print('Item: %s | Key: %s' % (item['data']['itemType'], item['data']['key']))
     
-       
-    # load text items from sdir to import them
-    #this needs to be walk, to build a dict/subdict tree structure
-    loaded_dict = {}
-    for dirpath, filenames, dirnames in os.walk( sdir):
-#    for fdir in dir_folders:
-        #check if exisit subcollectiom:
-        #if not, creat subcollection from fdir
-#        loaded_items = []
-        loaded_dict[dirpath] = {}
-        for ii in filenames:
-#           read each md, save as standalonenote using api
-            if  ii.endswith('.md'):
-                with open( os.path.join( dirpath, ii), 'rt') as fp:
-                    xx = fp.readlines()
-                    print( ii, '\n------\n', xx)
-                    loaded_dict[dirpath][ii[:-4]] = xx
-    #not lets print what we've got to check
-    print( loaded_dict)
+      
     
     exit()
         
@@ -65,6 +55,38 @@ def mdtree_to_z( sdir , api_key):
             parentid (str) – A Parent item ID. This will cause the item(s) to become the child items of the given parent ID
             last_modified (str/int) – If not None will set the value of the If-Unmodified-Since-Version header.
 """
+
+#@+node:martin.20211211160450.1: ** dir_to_dict
+def dir_to_dict (rootdir):
+    """
+    Creates a nested dictionary that represents the folder structure of rootdir
+    """
+    #https://code.activestate.com/recipes/577879-create-a-nested-dictionary-from-oswalk/
+    dir_dict = {}
+    rootdir = rootdir.rstrip(os.sep)
+    start = rootdir.rfind(os.sep) + 1
+    for path, dirs, files in os.walk(rootdir):
+        folders = path[start:].split(os.sep)
+        
+        subdir = dict.fromkeys(files)
+        
+        parent = reduce( dict.get, folders[:-1], dir_dict)
+
+        parent[ folders[-1]] = subdir
+    
+    return dir_dict
+
+"""    
+        for ii in filenames:
+#           read each md, save as standalonenote using api
+            if  ii.endswith('.md'):
+                with open( os.path.join( dirpath, ii), 'rt') as fp:
+                    xx = fp.readlines()
+                    print( ii, '\n------\n', xx)
+                    loaded_dict[dirpath][ii[:-4]] = xx
+    #not lets print what we've got to check
+"""
+
 
 #@+node:martin.20210605234949.1: ** j_to_z_json
 def j_to_z_json( sdir, api_key):
