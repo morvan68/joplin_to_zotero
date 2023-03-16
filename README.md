@@ -2,6 +2,10 @@
 Small utility to create a collection within online zotero based on
 a local folder structure+text files, or a flat JSON folder.
 
+It's nothing special, and it's quite specific to my needs, but hopefully someone
+will find it useful as an example of using pyzotero, as the api docs are pretty
+sparse of working examples.
+
 This can be used to to move notes from joplin to a collection within zotero,
 by using joplin to export its data as a md or JSON, then using this script
 to import into zotero.
@@ -9,8 +13,7 @@ to import into zotero.
 requirements:
 python3
 pyzotero
-you need an online zotero desitnation, and api_key, and need to know colelctio type
-and destination sub-collection
+you need an online zotero destination account, and api_key.
 
 ## md version
 in joplin, run 
